@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const config = require('./config');
 
-function d(s) { //Debug function for console
+function d(s) { // Helper function for debugging
     (async () => {
         s();
     })
@@ -9,10 +9,10 @@ function d(s) { //Debug function for console
 
 (async () => {
 
-  keyword = "fashion";
+  const keyword = config.keyword;
 
   const browser = await puppeteer.launch({
-      headless:false,
+      headless:true,
       devtools:true,
     });
   const page = await browser.newPage();
@@ -21,6 +21,7 @@ function d(s) { //Debug function for console
   await page.goto('https://moz.com/login');
   await page.type('input.forge-form-control:nth-child(2)', config.credentials.email);
   await page.type('input.forge-form-control:nth-child(3)', config.credentials.password);
+  console.log("Finished entering credentials...");
   
 
   await page.click('.forge-btn');
@@ -28,6 +29,7 @@ function d(s) { //Debug function for console
   await page.waitForNavigation();
 
   await page.goto('https://analytics.moz.com/pro/keyword-explorer/keyword/overview?locale=en-US');
+  console.log("Starting process keyword results...");
   await page.type('#app > div > div > div:nth-child(2) > div.omnisearch > form > div > input', keyword);
   //Click dropdown
   await page.click('#app > div > div > div:nth-child(2) > div.omnisearch > form > div > div > div');
@@ -36,23 +38,27 @@ function d(s) { //Debug function for console
   //Click analyze to get moz results
   await page.click('#app > div > div > div:nth-child(2) > div.omnisearch > form > button > span')
 
-  //Go to keyword analysis results page and export results
+  //Go to keyword suggestions results page and export results
   await page.goto('https://analytics.moz.com/pro/keyword-explorer/keyword/suggestions?locale=es-PR&q=' + keyword)
   await page._client.send('Page.setDownloadBehavior', {
     behavior: 'allow',
-    downloadPath: './'
+    downloadPath: './moz_downloads/'
   });
   await page.waitForSelector('#app > div > div > div:nth-child(2) > div:nth-child(7) > span > div.table-upper > div > button');
   await page.click('#app > div > div > div:nth-child(2) > div:nth-child(7) > span > div.table-upper > div > button');
+  console.log("Finished downloading keyword suggestions...");
 
-  //Go to keyword analysis results page and export results
+  //Go to serp analysis results page and export results
   await page.goto('https://analytics.moz.com/pro/keyword-explorer/keyword/serp-analysis?locale=es-PR&q=' + keyword);
   await page._client.send('Page.setDownloadBehavior', {
     behavior: 'allow',
-    downloadPath: './'
+    downloadPath: './moz_downloads/'
   });
   await page.waitForSelector('#app > div > div > div:nth-child(2) > div:nth-child(7) > span > div > button');
   await page.click('#app > div > div > div:nth-child(2) > div:nth-child(7) > span > div > button');
+  console.log("Finished downloading SERP analysis...")
 
-//   await browser.close()
+  console.log("Closing browser...");
+  await browser.close();
+
 })();

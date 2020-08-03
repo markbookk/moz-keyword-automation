@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-
+const config = require('./config');
 
 function d(s) { //Debug function for console
     (async () => {
@@ -19,8 +19,8 @@ function d(s) { //Debug function for console
   Object.assign(global, {browser, page, d});
   await page.setViewport({ width: 1366, height: 768});
   await page.goto('https://moz.com/login');
-  await page.type('input.forge-form-control:nth-child(2)', 'ttestasa@yandex.com');
-  await page.type('input.forge-form-control:nth-child(3)', 'ttestasa123');
+  await page.type('input.forge-form-control:nth-child(2)', config.credentials.email);
+  await page.type('input.forge-form-control:nth-child(3)', config.credentials.password);
   
 
   await page.click('.forge-btn');

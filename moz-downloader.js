@@ -34,6 +34,12 @@ function d(s) { // Helper function for debugging
 
   await page.goto('https://analytics.moz.com/pro/keyword-explorer/keyword/overview?locale=en-US');
   console.log("Starting process keyword results...");
+
+  //Get how many queries are available...
+  let element = await page.$('#app > div > div > div:nth-child(2) > div.omnisearch > span');
+  let value = await page.evaluate(el => el.textContent, element);
+  console.log(value);
+
   await page.type('#app > div > div > div:nth-child(2) > div.omnisearch > form > div > input', keyword);
   //Click dropdown
   await page.click('#app > div > div > div:nth-child(2) > div.omnisearch > form > div > div > div');

@@ -1,4 +1,8 @@
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
+
 const config = require('./config');
 
 function d(s) { // Helper function for debugging
@@ -18,14 +22,14 @@ function d(s) { // Helper function for debugging
   const page = await browser.newPage();
   Object.assign(global, {browser, page, d});
   await page.setViewport({ width: 1366, height: 768});
-  await page.goto('https://moz.com/login');
+  await page.goto('https://moz.com/login', {waitUntil: 'load'});
   await page.type('input.forge-form-control:nth-child(2)', config.credentials.email);
   await page.type('input.forge-form-control:nth-child(3)', config.credentials.password);
+  await page.keyboard.press('Enter');
   console.log("Finished entering credentials...");
   
 
-  await page.click('.forge-btn');
-
+  // await page.click('.forge-btn');
   await page.waitForNavigation();
 
   await page.goto('https://analytics.moz.com/pro/keyword-explorer/keyword/overview?locale=en-US');
